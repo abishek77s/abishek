@@ -1,10 +1,721 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Centered Page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Abishek S</title>
+  <style>
+    /* CSS Reset and Variables */
+    :root {
+      --color-bg: #f2f2f7;
+      --color-bg-secondary: #ffffff;
+      --color-text: #000000;
+      --color-text-secondary: #8e8e93;
+      --color-separator: #c6c6c8;
+      --color-accent: #007aff;
+      --color-destructive: #ff3b30;
+      --border-radius: 10px;
+      --header-height: 60px;
+      --transition: 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+      --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* App Container */
+    .app-container {
+      max-width: 400px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background-color: var(--color-bg);
+      position: relative;
+    }
+
+    /* Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 400px;
+      height: var(--header-height);
+      background-color: var(--color-bg-secondary);
+      border-bottom: 1px solid var(--color-separator);
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      height: 100%;
+      padding: 0 16px;
+      position: relative;
+    }
+
+    .back-button {
+      background: none;
+      border: none;
+      color: var(--color-accent);
+      cursor: pointer;
+      padding: 8px;
+      margin-left: -8px;
+      border-radius: 8px;
+      transition: background-color 0.2s;
+      position: absolute;
+      left: 8px;
+    }
+
+    .back-button:hover {
+      background-color: rgba(0, 122, 255, 0.1);
+    }
+
+    .header-title {
+      font-size: 17px;
+      font-weight: 600;
+      text-align: center;
+      flex: 1;
+      margin: 0;
+    }
+
+    /* Main Content */
+    .main-content {
+      padding-top: var(--header-height);
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Content Views */
+    .content-view {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--color-bg);
+      transform: translateX(100%);
+      transition: transform var(--transition);
+      overflow-y: auto;
+      padding-top: var(--header-height);
+    }
+
+    .content-view.active {
+      transform: translateX(0);
+      position: relative;
+      overflow-y: auto;
+    }
+
+    /* List Styles */
+    .settings-list {
+      background-color: var(--color-bg-secondary);
+      margin: 20px 16px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .settings-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-separator);
+      cursor: pointer;
+      transition: background-color 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .settings-item:last-child {
+      border-bottom: none;
+    }
+
+    .settings-item:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .settings-item:active {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .item-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-title {
+      font-size: 17px;
+      font-weight: 400;
+      color: var(--color-text);
+      margin-bottom: 2px;
+    }
+
+    .item-subtitle {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+    }
+
+    .item-value {
+      font-size: 17px;
+      color: var(--color-text-secondary);
+      margin-right: 8px;
+    }
+
+    .item-chevron {
+      color: var(--color-text-secondary);
+      opacity: 0.6;
+    }
+
+    /* Detail Pages */
+    .detail-page {
+      padding: 20px 16px 40px 16px;
+    }
+
+    .detail-section {
+      background-color: var(--color-bg-secondary);
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .detail-header {
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--color-separator);
+    }
+
+    .detail-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .detail-subtitle {
+      font-size: 17px;
+      color: var(--color-text-secondary);
+    }
+
+    .detail-content {
+      padding: 16px;
+    }
+
+    .detail-text {
+      font-size: 17px;
+      line-height: 1.5;
+      color: var(--color-text);
+      margin-bottom: 16px;
+    }
+
+    .detail-text:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Article Content */
+    .article-content {
+      padding: 20px 16px 40px 16px;
+      background-color: var(--color-bg);
+    }
+
+    .article-header {
+      margin-bottom: 24px;
+    }
+
+    .article-meta {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .article-title {
+      font-size: 24px;
+      font-weight: 600;
+      line-height: 1.3;
+      margin-bottom: 12px;
+    }
+
+    .article-excerpt {
+      font-size: 17px;
+      color: var(--color-text-secondary);
+      line-height: 1.4;
+    }
+
+    .article-body {
+      background-color: var(--color-bg-secondary);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-top: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .article-body h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 20px 0 12px 0;
+      color: var(--color-text);
+    }
+
+    .article-body h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 16px 0 8px 0;
+      color: var(--color-text);
+    }
+
+    .article-body p {
+      font-size: 17px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      color: var(--color-text);
+    }
+
+    .article-body blockquote {
+      background-color: var(--color-bg);
+      border-left: 4px solid var(--color-accent);
+      padding: 16px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: var(--color-text-secondary);
+    }
+
+    .article-body ul {
+      margin: 16px 0;
+      padding-left: 20px;
+    }
+
+    .article-body li {
+      font-size: 17px;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+
+    .back-link {
+      padding: 20px 16px;
+      background-color: var(--color-bg-secondary);
+      margin: 20px 16px 0 16px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--color-accent);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.2s;
+    }
+
+    .back-link:hover {
+      background-color: rgba(0, 122, 255, 0.1);
+    }
+
+    @media (max-width: 400px) {
+      .settings-list {
+        margin: 20px 0;
+        border-radius: 0;
+      }
+
+      .article-content {
+        padding: 20px 0 40px 0;
+      }
+
+      .detail-page {
+        padding: 20px 0 40px 0;
+      }
+
+      .back-link {
+        margin: 20px 0 0 0;
+        border-radius: 0;
+      }
+    }
+  </style>
 </head>
-<body style="text-align:center; font-family:sans-serif;">
-  <h1>abishek</h1> 
-  <p>work in progress.</p> 
+<body>
+  <div class="app-container">
+    <header class="header">
+      <div class="header-content">
+        <button class="back-button" id="back-button" style="display: none;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <h1 class="header-title" id="header-title">Abishek S</h1>
+      </div>
+    </header>
+
+    <main class="main-content" id="main-content">
+      <div class="content-view active">
+        <div class="settings-list">
+          <div class="settings-item" data-action="page" data-id="about">
+            <div class="item-content">
+              <div class="item-title">About</div>
+              <div class="item-subtitle">Frontend Developer & Designer</div>
+            </div>
+            <svg class="item-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div class="settings-item" data-action="list" data-id="projects">
+            <div class="item-content">
+              <div class="item-title">Projects</div>
+              <div class="item-subtitle">3 projects</div>
+            </div>
+            <svg class="item-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div class="settings-item" data-action="article" data-id="minimal-interfaces">
+            <div class="item-content">
+              <div class="item-title">Web Wrapped</div>
+              <div class="item-subtitle">December, 2024</div>
+            </div>
+            <svg class="item-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <div class="settings-item" data-action="page" data-id="contact">
+            <div class="item-content">
+              <div class="item-title">Contact</div>
+              <div class="item-subtitle">Get in touch</div>
+            </div>
+            <svg class="item-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const content = {
+      pages: {
+        about: {
+          title: "About",
+          details: [
+            { label: "Role", value: "Frontend Developer & Designer" },
+            { label: "Company", value: "TechCorp" },
+            { label: "Location", value: "San Francisco, CA" },
+            { label: "Experience", value: "5+ years" }
+          ],
+          bio: "I'm a frontend developer & designer at TechCorp. I design and build products that feel magical, yet simple and intuitive. I obsess over the smallest details and I like to make people feel something through my work.",
+          socialLinks: [
+            { label: "Email", value: "hello@johndoe.dev", url: "mailto:hello@johndoe.dev" },
+            { label: "Twitter", value: "@johndoe", url: "https://twitter.com/johndoe" },
+            { label: "GitHub", value: "github.com/johndoe", url: "https://github.com/johndoe" }
+          ]
+        },
+        contact: {
+          title: "Contact",
+          message: "let's work together on something cool, or say hi if you;re bored.",
+          links: [
+            { label: "Email", value: "abishek22004@gmail.com", url: "mailto:abishek22004@gmail.com", primary: true },
+            { label: "Twitter", value: "@abi_dzn", url: "https://twitter.com/abi_dzn" },
+            { label: "GitHub", value: "github.com/abishek77s", url: "https://github.com/abishek77s" }
+          ]
+        }
+      },
+      projects: [
+        {
+          id: "ww",
+          title: "Web Wrapped",
+          subtitle: "",
+          description: "",
+          overview: "Spotify wrapped for your browser.",
+          features: [
+            "Local Processing"
+          ],
+          technology: ["React", "TypeScript", "TailwindCSS"],
+          year: "2024"
+        },
+        {
+          id: "sf",
+          title: "StudioFLow",
+          subtitle: "",
+          description: "Tool for creators.",
+          overview: "Simple tool for title, description, tags generation for YouTube videos.",
+          features: [
+            "use directly on YT Studio"
+          ],
+          technology: ["JavaScript", "Gemini"],
+          year: "2025"
+        }
+      ],
+      articles: {
+        "minimal-interface": {
+          title: "work in progress",
+          date: "October 22, 2025",
+          readTime: "2 sec read",
+          excerpt: "so lazy to write this.",
+          content: `
+            <h2>world moves so fast yet so dumb.</h2>
+          `
+        }
+      }
+    }
+
+    class SettingsNav {
+      constructor() {
+        this.navigationStack = []
+        this.mainContent = document.getElementById("main-content")
+        this.headerTitle = document.getElementById("header-title")
+        this.backButton = document.getElementById("back-button")
+        this.setupEventListeners()
+      }
+
+      setupEventListeners() {
+        this.backButton.addEventListener("click", () => this.goBack())
+
+        document.addEventListener("click", (e) => {
+          const item = e.target.closest(".settings-item")
+          if (item) {
+            e.preventDefault()
+            const action = item.dataset.action
+            const id = item.dataset.id
+            this.handleNavigation(action, id)
+          }
+        })
+      }
+
+      handleNavigation(action, id) {
+        this.navigationStack.push(this.getCurrentState())
+        
+        switch (action) {
+          case "page":
+            this.showPage(id)
+            break
+          case "list":
+            this.showList(id)
+            break
+          case "article":
+            this.showArticle(id)
+            break
+          case "detail":
+            this.showDetail(id)
+            break
+        }
+      }
+
+      getCurrentState() {
+        return this.headerTitle.textContent
+      }
+
+      showPage(pageId) {
+        const page = content.pages[pageId]
+        if (!page) return
+
+        let html = ""
+
+        if (pageId === "about") {
+          html = `
+            <div class="content-view active">
+              <div class="detail-page">
+                <div class="detail-section">
+                  <div class="detail-header">
+                    <div class="detail-title">${page.title}</div>
+                  </div>
+                  <div class="detail-content">
+                    <div class="detail-text">${page.bio}</div>
+                  </div>
+                </div>
+
+                <div class="settings-list">
+                  ${page.details.map(d => `
+                    <div class="settings-item">
+                      <div class="item-content">
+                        <div class="item-title">${d.label}</div>
+                      </div>
+                      <div class="item-value">${d.value}</div>
+                    </div>
+                  `).join("")}
+                </div>
+
+                <div class="settings-list">
+                  ${page.socialLinks.map(link => `
+                    <a href="${link.url}" class="settings-item">
+                      <div class="item-content">
+                        <div class="item-title">${link.label}</div>
+                        <div class="item-subtitle">${link.value}</div>
+                      </div>
+                      <svg class="item-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                  `).join("")}
+                </div>
+              </div>
+            </div>
+          `
+        } else if (pageId === "contact") {
+          html = `
+            <div class="content-view active">
+              <div class="detail-page">
+                <div class="detail-section">
+                  <div class="detail-header">
+                    <div class="detail-title">${page.title}</div>
+                  </div>
+                  <div class="detail-content">
+                    <div class="detail-text">${page.message}</div>
+                  </div>
+                </div>
+
+                <div class="settings-list">
+                  ${page.links.map((link, i) => `
+                    <a href="${link.url}" class="settings-item" ${i === 0 ? 'style="color: var(--color-accent);"' : ''}>
+                      <div class="item-content">
+                        <div class="item-title" style="${i === 0 ? 'color: var(--color-accent);' : ''}">${link.label}</div>
+                        <div class="item-subtitle">${link.value}</div>
+                      </div>
+                      <svg class="item-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </a>
+                  `).join("")}
+                </div>
+              </div>
+            </div>
+          `
+        }
+
+        this.updateView(html, page.title, true)
+      }
+
+      showList(listId) {
+        if (listId === "projects") {
+          const html = `
+            <div class="content-view active">
+              <div class="settings-list">
+                ${content.projects.map(p => `
+                  <div class="settings-item" data-action="detail" data-id="${p.id}">
+                    <div class="item-content">
+                      <div class="item-title">${p.title}</div>
+                      <div class="item-subtitle">${p.subtitle}</div>
+                    </div>
+                    <svg class="item-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                      <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `
+          this.updateView(html, "Projects", true)
+        }
+      }
+
+      showDetail(projectId) {
+        const project = content.projects.find(p => p.id === projectId)
+        if (!project) return
+
+        const html = `
+          <div class="content-view active">
+            <div class="detail-page">
+              <div class="back-link" onclick="document.querySelector('.app-container').__nav.goBack()">
+                ← Back
+              </div>
+
+              <div class="detail-section">
+                <div class="detail-header">
+                  <div class="detail-title">${project.title}</div>
+                  <div class="detail-subtitle">${project.description}</div>
+                </div>
+                <div class="detail-content">
+                  <div class="detail-text">${project.overview}</div>
+                </div>
+              </div>
+
+              <div class="detail-section">
+                <div class="detail-content">
+                  <div class="detail-text"><strong>Features:</strong></div>
+                  <ul>
+                    ${project.features.map(f => `<li>${f}</li>`).join("")}
+                  </ul>
+                </div>
+              </div>
+
+              <div class="detail-section">
+                <div class="detail-content">
+                  <div class="detail-text"><strong>Technology Stack:</strong></div>
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                    ${project.technology.map(t => `
+                      <span style="background-color: var(--color-bg); color: var(--color-text-secondary); padding: 4px 12px; border-radius: 16px; font-size: 14px;">${t}</span>
+                    `).join("")}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+        this.updateView(html, project.title, true)
+      }
+
+      showArticle(articleId) {
+        const article = content.articles[articleId]
+        if (!article) return
+
+        const html = `
+          <div class="content-view active">
+            <div class="article-content">
+              <div class="back-link" onclick="document.querySelector('.app-container').__nav.goBack()">
+                ← Back to Menu
+              </div>
+
+              <div class="article-header">
+                <div class="article-meta">${article.date} • ${article.readTime}</div>
+                <div class="article-title">${article.title}</div>
+                <div class="article-excerpt">${article.excerpt}</div>
+              </div>
+
+              <div class="article-body">
+                ${article.content}
+              </div>
+            </div>
+          </div>
+        `
+        this.updateView(html, article.title, true)
+      }
+
+      updateView(html, title, showBack) {
+        this.mainContent.innerHTML = html
+        this.headerTitle.textContent = title
+        this.backButton.style.display = showBack ? "block" : "none"
+      }
+
+      goBack() {
+        if (this.navigationStack.length > 0) {
+          this.navigationStack.pop()
+          const contentView = this.mainContent.querySelector(".content-view")
+          if (contentView) {
+            contentView.remove()
+          }
+          this.navigationStack = []
+          location.reload()
+        }
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const nav = new SettingsNav()
+      document.querySelector(".app-container").__nav = nav
+    })
+  </script>
 </body>
 </html>
