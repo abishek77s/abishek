@@ -1,65 +1,186 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Momo+Signature&family=Mona+Sans:ital,wght@0,200..900;1,200..900&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@200&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Courier', monospace;
       display: flex;
-      justify-content: center; 
-      align-items: center;     
-      height: 100vh;           
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
       margin: 0;
     }
-    a {
-  color: #222121;           /* grey color */
-  text-decoration: underline; /* keep underline */
-}
-    .center-box {
-      display: flex;
-      flex-direction: column;
-      justify-content: center; 
-       gap: 16px;
-      padding: 32px;
-      width: 40%;
-      height: 100vh;           
-      background-color: rgb(244, 243, 243);
-      border: 1px solid #dcdcdc;
 
+    .momo-signature-regular {
+      font-family: "Momo Signature", cursive;
+      font-weight: 400;
+      font-style: normal;
     }
-    .empty{
-        height: 200px;
+
+    .letter {
+      display: inline-block;
+      opacity: 0;
+      animation: writeOn 0.2s ease forwards;
     }
-    @media (max-width: 900px) {
-    .center-box {
-        width: 100%;       /* full width on small screens */
-        padding: 16px;     /* optional: reduce padding for mobile */
+
+    @keyframes writeOn {
+      0% {
+        opacity: 0;
+        transform: translateY(-20px) scale(0.8);
+      }
+
+      50% {
+        opacity: 0.7;
+        transform: translateY(-5px) scale(1.1);
+        color: #a50663;
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
-}
+
+    .letter:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    .letter:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .letter:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .letter:nth-child(4) {
+      animation-delay: 0.3s;
+    }
+
+    .letter:nth-child(5) {
+      animation-delay: 0.4s;
+    }
+
+    .letter:nth-child(6) {
+      animation-delay: 0.5s;
+    }
+
+    .letter:nth-child(7) {
+      animation-delay: 0.6s;
+    }
+
+    .letter:nth-child(8) {
+      animation-delay: 0.7s;
+    }
+
+    .letter:nth-child(9) {
+      animation-delay: 0.8s;
+    }
+
+    .letter:nth-child(10) {
+      animation-delay: 0.9s;
+    }
+
+    .geist-mono {
+      font-family: "Geist Mono", monospace;
+      font-optical-sizing: auto;
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    a {
+      position: relative;
+      display: inline-block;
+      color: #a50663;
+      text-decoration: none;
+      padding-bottom: 6px;
+      transition: transform 0.3s ease, color 0.3s ease;
+    }
+
+    p{
+      line-height: 1.8;
+    }
+
+    /* Straight underline by default */
+    a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background-color: #a50663;
+      transition: all 0.2s ease;
+    }
+
+    /* Hover effect — replace straight line with moving wave */
+    a:hover {
+      color: #d61984;
+      transform: translateY(-2px);
+    }
+@media (max-width: 900px) {
+        .center-box {
+          width: 100%;
+          /* full width on small screens */
+          padding: 32px;
+          /* optional: reduce padding for mobile */
+        }
+      }
+    a:hover::after {
+      height: 8px;
+      background: url("data:image/svg+xml;utf8,\<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none' >\<path d='M0,10 Q10,0 20,10 T40,10 T60,10 T80,10 T100,10 T120,10' fill='none' stroke='%23a50663' stroke-width='2' />\</svg>") repeat-x;
+      background-size: 60px 8px;
+      animation: waveMove 1.8s linear infinite;
+      }
+
+      @keyframes waveMove {
+        from {
+          background-position-x: 0;
+        }
+
+        to {
+          background-position-x: 60px;
+        }
+      }
   </style>
 </head>
+
 <body>
-  <div class="center-box">
+  <div class="center-box geist-mono">
     <div>
-<h1>Abishek S</h1>
-<p>let's connect and make cool projects or say hi if you're bored.</p>
-<a href="https://github.com/abishek77s" target="_blank">github</a> |
-<a href="https://twitter.com/abi_dzn" target="_blank">twitter</a> |
-<a href="https://www.linkedin.com/in/abishek-s-193204202/" target="_blank">linkedin</a> |
-<a href="mailto:abishek22004@gmail.com">mail</a>
-
-
-</div>
+      <h1 class="momo-signature-regular">
+        <span class="letter">A</span><span class="letter">b</span><span class="letter">i</span><span class="letter">s</span><span class="letter">h</span><span class="letter">e</span><span class="letter">k</span><span class="letter"></span>
+        <span class="letter"> S</span>
+      </h1>
+      
+      <p>let's connect and make cool projects or say hi if you're bored.</p>
+      <a href="https://github.com/abishek77s" target="_blank">github</a> • <a href="https://twitter.com/abi_dzn"
+        target="_blank">twitter</a> • <a href="https://www.linkedin.com/in/abishek-s-193204202/"
+        target="_blank">linkedin</a> • <a href="mailto:abishek22004@gmail.com">mail</a>
+    </div>
     <div>
-
-<h3>Projects</h3>
-<a href="https://webwrap-omega.vercel.app/" target="_blank">web wrapped</a>
-<a href="https://chromewebstore.google.com/detail/studioflow/ejfgbojlgbkllakhnhhldmpejcblbdgc/" target="_blank">studio flow</a> 
-</div>
-
-
+      <h3>Projects</h3>
+      <a href="https://webwrap-omega.vercel.app/" target="_blank">web wrapped</a> • <a
+        href="https://chromewebstore.google.com/detail/studioflow/ejfgbojlgbkllakhnhhldmpejcblbdgc/"
+        target="_blank">studio flow</a>
+    </div>
+    <div>
+      <h3>Currently At</h3>
+      <p>
+        <a href="https://skillrank.io/" target="_blank">SkillRank</a> - July, 2025
+      </p>
+    </div>
+    
   </div>
 </body>
-</html>
 
+</html>
