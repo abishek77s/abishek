@@ -127,30 +127,32 @@
       color: #d61984;
       transform: translateY(-2px);
     }
-@media (max-width: 900px) {
-        .center-box {
-          width: 100%;
-          /* full width on small screens */
-          padding: 32px;
-          /* optional: reduce padding for mobile */
-        }
-      }
+
     a:hover::after {
       height: 8px;
       background: url("data:image/svg+xml;utf8,\<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 20' preserveAspectRatio='none' >\<path d='M0,10 Q10,0 20,10 T40,10 T60,10 T80,10 T100,10 T120,10' fill='none' stroke='%23a50663' stroke-width='2' />\</svg>") repeat-x;
       background-size: 60px 8px;
       animation: waveMove 1.8s linear infinite;
+    }
+
+    @keyframes waveMove {
+      from {
+        background-position-x: 0;
       }
 
-      @keyframes waveMove {
-        from {
-          background-position-x: 0;
-        }
-
-        to {
-          background-position-x: 60px;
-        }
+      to {
+        background-position-x: 60px;
       }
+    }
+
+    @media (max-width: 900px) {
+      .center-box {
+        width: 100%;
+        /* full width on small screens */
+        padding: 32px;
+        /* optional: reduce padding for mobile */
+      }
+    }
   </style>
 </head>
 
@@ -182,7 +184,10 @@
         <a href="https://skillrank.io/" target="_blank">SkillRank</a> - July, 2025
       </p>
     </div>
-
+    <div>
+      <h3>Blog</h3>
+      <a href="https://www.notion.so/Slopware-2da0a679891c80c4a9f5d274e1ac2e2f" target="_blank">Slopware</a>
+    </div>
   </div>
 </body>
 
