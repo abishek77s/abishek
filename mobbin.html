@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Mobbin Access Control Bypass — Public Disclosure</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            :root {
+                --bg: #f6f4f0;
+                --text: #1a1917;
+                --muted: #6b6760;
+                --accent: #c0392b;
+                --border: #d9d6d0;
+                --mono: "Poppins", sans-serif;
+                --serif: "Poppins", sans-serif;
+            }
+
+            body {
+                background: var(--bg);
+                color: var(--text);
+                font-family: var(--mono);
+                font-size: 14px;
+                line-height: 1.7;
+                min-height: 100vh;
+            }
+
+            .wrap {
+                max-width: 680px;
+                margin: 0 auto;
+                padding: 80px 24px 120px;
+            }
+
+            /* ── Header ── */
+            .site-header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-bottom: 72px;
+                font-size: 12px;
+                color: var(--muted);
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+            }
+            .site-header .dot {
+                width: 6px;
+                height: 6px;
+                background: var(--accent);
+                border-radius: 50%;
+                animation: pulse 2s ease-in-out infinite;
+            }
+            @keyframes pulse {
+                0%,
+                100% {
+                    opacity: 1;
+                }
+                50% {
+                    opacity: 0.3;
+                }
+            }
+
+            /* ── Article meta ── */
+            .meta {
+                display: flex;
+                gap: 16px;
+                font-size: 11px;
+                color: var(--muted);
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                margin-bottom: 20px;
+            }
+            .tag {
+                color: var(--accent);
+                border: 1px solid var(--accent);
+                padding: 2px 8px;
+                border-radius: 2px;
+            }
+
+            h1 {
+                font-family: var(--serif);
+                font-size: clamp(2rem, 5vw, 2.8rem);
+                font-weight: 400;
+                line-height: 1.15;
+                margin-bottom: 12px;
+                letter-spacing: -0.01em;
+            }
+            h1 em {
+                font-style: italic;
+                color: var(--accent);
+            }
+
+            .byline {
+                font-size: 12px;
+                color: var(--muted);
+                margin-bottom: 40px;
+                padding-bottom: 40px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            /* ── Prose ── */
+            h2 {
+                font-family: var(--serif);
+                font-size: 1.35rem;
+                font-weight: 400;
+                margin: 48px 0 14px;
+            }
+            p {
+                margin-bottom: 16px;
+                color: #2c2a27;
+            }
+
+            blockquote {
+                border-left: 3px solid var(--accent);
+                padding: 14px 20px;
+                margin: 28px 0;
+                background: #eeecea;
+                font-size: 13px;
+                color: var(--muted);
+            }
+            blockquote strong {
+                color: var(--text);
+            }
+
+            .disclosure-box {
+                background: #fff8f7;
+                border: 1px solid #f5c6c2;
+                border-left: 4px solid var(--accent);
+                padding: 20px 24px;
+                margin: 32px 0;
+                border-radius: 2px;
+            }
+            .disclosure-box .label {
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 0.12em;
+                color: var(--accent);
+                margin-bottom: 8px;
+            }
+
+            /* ── Image playground ── */
+            .playground {
+                margin: 48px 0;
+                border: 1px solid var(--border);
+                border-radius: 4px;
+                overflow: hidden;
+            }
+            .playground-header {
+                background: #eeecea;
+                border-bottom: 1px solid var(--border);
+                padding: 14px 20px;
+                font-size: 11px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: var(--muted);
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+            .playground-header span {
+                color: var(--text);
+                font-weight: 500;
+            }
+
+            .playground-body {
+                padding: 20px;
+                display: grid;
+                grid-template-columns: minmax(260px, 340px) minmax(0, 1fr);
+                gap: 20px;
+                align-items: start;
+            }
+
+            .param-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-bottom: 16px;
+            }
+            .control-panel {
+                min-width: 0;
+            }
+            .preview-panel {
+                min-width: 0;
+            }
+            @media (max-width: 760px) {
+                .playground-body {
+                    grid-template-columns: 1fr;
+                }
+            }
+            @media (max-width: 500px) {
+                .param-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .param-row {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .param-row label {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.07em;
+                color: var(--muted);
+            }
+            .param-row input,
+            .param-row select {
+                background: var(--bg);
+                border: 1px solid var(--border);
+                border-radius: 3px;
+                padding: 7px 10px;
+                font-family: var(--mono);
+                font-size: 13px;
+                color: var(--text);
+                width: 100%;
+                outline: none;
+                transition: border-color 0.15s;
+            }
+            .param-row input:focus,
+            .param-row select:focus {
+                border-color: var(--text);
+            }
+
+            .watermark-toggle {
+                margin-bottom: 16px;
+                padding: 12px 16px;
+                background: #eeecea;
+                border-radius: 3px;
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .toggle-label {
+                font-size: 11px;
+                text-transform: uppercase;
+                letter-spacing: 0.07em;
+                color: var(--muted);
+                margin-bottom: 2px;
+            }
+            .wm-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .wm-row input[type="checkbox"] {
+                width: 15px;
+                height: 15px;
+                accent-color: var(--accent);
+                cursor: pointer;
+                flex-shrink: 0;
+            }
+            .wm-row label {
+                font-size: 13px;
+                cursor: pointer;
+            }
+
+            .url-preview {
+                background: #1a1917;
+                color: #a8d5b5;
+                border-radius: 3px;
+                padding: 12px 14px;
+                font-size: 11.5px;
+                word-break: break-all;
+                margin-bottom: 14px;
+                line-height: 1.6;
+            }
+            .url-preview .dim {
+                color: #555;
+            }
+            .url-preview .hi {
+                color: #f4d03f;
+            }
+
+            .btn-row {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            button {
+                font-family: var(--mono);
+                font-size: 12px;
+                letter-spacing: 0.06em;
+                text-transform: uppercase;
+                padding: 9px 18px;
+                border-radius: 3px;
+                cursor: pointer;
+                border: 1px solid var(--border);
+                transition: all 0.15s;
+            }
+            .btn-secondary {
+                background: transparent;
+                color: var(--text);
+            }
+            .btn-secondary:hover {
+                background: var(--border);
+            }
+
+            .image-area {
+                border: 1px solid var(--border);
+                border-radius: 3px;
+                min-height: 260px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                background: #eeecea;
+                position: relative;
+                padding: 10px;
+            }
+            .image-area img {
+                max-width: 100%;
+                max-height: 560px;
+                display: block;
+                border-radius: 2px;
+            }
+            .image-placeholder {
+                color: var(--muted);
+                font-size: 12px;
+                letter-spacing: 0.05em;
+                text-align: center;
+                padding: 40px;
+            }
+            .image-status {
+                font-size: 11px;
+                color: var(--muted);
+                margin-top: 8px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .status-ok {
+                color: #27ae60;
+            }
+            .status-err {
+                color: var(--accent);
+            }
+            .status-load {
+                color: #e67e22;
+            }
+
+            /* ── Comparison ── */
+            .compare-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin: 24px 0;
+            }
+            @media (max-width: 500px) {
+                .compare-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .compare-item {
+            }
+            .compare-item .clabel {
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: var(--muted);
+                margin-bottom: 6px;
+            }
+            .compare-item img {
+                width: 100%;
+                border: 1px solid var(--border);
+                border-radius: 3px;
+                display: block;
+            }
+
+            /* ── Fix section ── */
+            code {
+                font-family: var(--mono);
+                font-size: 12px;
+                background: #eeecea;
+                padding: 2px 6px;
+                border-radius: 2px;
+                border: 1px solid var(--border);
+            }
+            pre {
+                background: #1a1917;
+                color: #c8d8c8;
+                padding: 20px;
+                border-radius: 4px;
+                font-size: 12px;
+                overflow-x: auto;
+                margin: 16px 0;
+                line-height: 1.7;
+            }
+            pre .c {
+                color: #6a8a6a;
+            }
+            pre .k {
+                color: #e07b7b;
+            }
+            pre .s {
+                color: #f4d03f;
+            }
+            pre .v {
+                color: #7ec8e3;
+            }
+
+            .timeline {
+                margin: 24px 0;
+                border-left: 2px solid var(--border);
+                padding-left: 24px;
+            }
+            .tl-item {
+                position: relative;
+                margin-bottom: 20px;
+            }
+            .tl-item::before {
+                content: "";
+                position: absolute;
+                left: -30px;
+                top: 5px;
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: var(--border);
+                border: 2px solid var(--bg);
+            }
+            .tl-item.done::before {
+                background: #27ae60;
+            }
+            .tl-item.warn::before {
+                background: #e67e22;
+            }
+            .tl-item.bad::before {
+                background: var(--accent);
+            }
+            .tl-date {
+                font-size: 11px;
+                color: var(--muted);
+                letter-spacing: 0.05em;
+                margin-bottom: 3px;
+            }
+            .tl-desc {
+                font-size: 13px;
+            }
+
+            hr {
+                border: none;
+                border-top: 1px solid var(--border);
+                margin: 48px 0;
+            }
+
+            footer {
+                font-size: 11px;
+                color: var(--muted);
+                padding-top: 32px;
+                border-top: 1px solid var(--border);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <h1>Mobbin's <em>blurred</em> screenshots aren't blurred</h1>
+
+            <div class="byline">
+                Originally disclosed Aug 12, 2025 &nbsp;·&nbsp; No response
+                received after ~9 months
+            </div>
+
+            <p>
+                Mobbin uses image-processing query parameters to serve
+                low-resolution, watermarked previews to free users. The
+                full-resolution, unwatermarked source image is served from the
+                same URL — the "protection" exists only in the parameters
+                appended to it.
+            </p>
+
+            <h2>The vulnerability</h2>
+
+            <p>
+                Mobbin's CDN (<code>bytescale.mobbin.com</code>) processes
+                images dynamically via URL parameters. A gated preview for a
+                free user looks like this:
+            </p>
+
+            <pre><span class="c"># What free users receive</span>
+<span class="v">https://bytescale.mobbin.com/FW25bBB/image/</span>
+  <span class="s">mobbin.com/prod/content/app_screens/&lt;id&gt;.png</span>
+  <span class="k">?f=webp&w=15&q=85&fit=shrink-cover</span>   </span><span class="c">← width set to 15</span>
+  <span class="k">&extend-bottom=120</span>
+  <span class="k">&image=/mobbin.com/prod/watermark/...  </span><span class="c">← watermark overlay</span>
+  <span class="k">&gravity=bottom&v=1.0</span></pre>
+
+            <p>
+                Strip all parameters, or simply change <code>w=15</code> to
+                <code>w=1920</code> and remove the watermark overlay, and you
+                receive the full source image at full quality — no
+                authentication check, no server-side access control.
+            </p>
+
+            <pre><span class="c"># Full resolution, no watermark</span>
+<span class="v">https://bytescale.mobbin.com/FW25bBB/image/</span>
+  <span class="s">mobbin.com/prod/content/app_screens/&lt;id&gt;.png</span>
+  <span class="k">?f=webp&w=1920&q=100</span></pre>
+
+            <div class="disclosure-box">
+                <div class="label">Impact</div>
+                Any Mobbin image URL — obtainable from page source, DevTools, or
+                network inspection — can be transformed into its full-resolution
+                equivalent. This bypasses the paid subscription that gates
+                high-quality screenshot access.
+            </div>
+
+            <h2>Side-by-side comparison</h2>
+            <p>Using free screen as example</p>
+            <div
+                class="compare-grid"
+                style="display: flex; gap: 12px; align-items: center"
+            >
+                <div
+                    class="compare-item"
+                    style="flex: 0 0 240px; text-align: center"
+                >
+                    <div class="clabel" style="font-size: 0.9rem">
+                        What free users see (w=15)
+                    </div>
+                    <img
+                        id="blurred-img"
+                        src="https://bytescale.mobbin.com/FW25bBB/image/mobbin.com/prod/content/app_screens/9a4cc027-1780-4dc4-bf40-28547660737b.png?f=webp&w=15&q=85&fit=shrink-cover"
+                        alt="Blurred preview"
+                        style="
+                            width: 100%;
+                            height: auto;
+                            max-width: 240px;
+                            border-radius: 6px;
+                        "
+                    />
+                </div>
+                <div
+                    class="compare-item"
+                    style="flex: 1 1 480px; text-align: center"
+                >
+                    <div class="clabel" style="font-size: 0.9rem">
+                        Full resolution (w=1920)
+                    </div>
+                    <img
+                        id="full-img"
+                        src="https://bytescale.mobbin.com/FW25bBB/image/mobbin.com/prod/content/app_screens/9a4cc027-1780-4dc4-bf40-28547660737b.png?f=webp&w=1920&q=100"
+                        alt="Full resolution"
+                        style="
+                            width: 100%;
+                            height: auto;
+                            max-width: 480px;
+                            border-radius: 6px;
+                        "
+                    />
+                </div>
+            </div>
+
+
+
+            <p>
+                Adjust the URL parameters below to see the
+                effect in real time.
+            </p>
+
+            <div class="playground">
+                <div class="playground-header">
+                    <span>CDN Parameter Explorer</span>
+                </div>
+                <div class="playground-body">
+                    <div class="control-panel">
+                        <div class="param-grid">
+                            <div class="param-row">
+                                <label>Width (w)</label>
+                                <select id="p-w">
+                                    <option value="15">15</option>
+                                    <option value="320">320</option>
+                                    <option value="768">768</option>
+                                    <option value="1200">1200</option>
+                                    <option value="1920" selected>1920</option>
+                                    <option value="2560">2560</option>
+                                </select>
+                            </div>
+                            <div class="param-row">
+                                <label>Quality (q)</label>
+                                <select id="p-q">
+                                    <option value="15">15</option>
+                                    <option value="60">60</option>
+                                    <option value="85">85</option>
+                                    <option value="100" selected>100</option>
+                                </select>
+                            </div>
+                            <div class="param-row">
+                                <label>Format (f)</label>
+                                <select id="p-f">
+                                    <option value="webp">webp</option>
+                                    <option value="jpg">jpg</option>
+                                    <option value="png">png</option>
+                                </select>
+                            </div>
+                            <div class="param-row">
+                                <label>Fit</label>
+                                <select id="p-fit">
+                                    <option value="">— none —</option>
+                                    <option value="shrink-cover">
+                                        shrink-cover
+                                    </option>
+                                    <option value="cover">cover</option>
+                                    <option value="contain">contain</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="watermark-toggle">
+                            <div class="toggle-label">Watermark overlay</div>
+                            <div class="wm-row">
+                                <input type="checkbox" id="wm-on" />
+                                <label for="wm-on"
+                                    >Add watermark, q=15 &amp; extend-bottom=120
+                                    (simulates free-user URL)</label
+                                >
+                            </div>
+                        </div>
+
+                        <div class="url-preview" id="url-display">
+                            —
+                        </div>
+
+                        <div class="btn-row">
+                            <button
+                                class="btn-secondary"
+                                onclick="resetParams()"
+                            >
+                                Reset to full-res
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="preview-panel">
+                        <div class="image-area" id="img-area">
+                            <img
+                                id="play-img"
+                                src=""
+                                alt="Preview"
+                                style="display: none"
+                            />
+                            <div class="image-placeholder" id="img-placeholder">
+                                Loading preview...
+                            </div>
+                        </div>
+                        <div class="image-status" id="img-status"></div>
+                    </div>
+                </div>
+            </div>
+
+            <p>
+                The right fix is server-side access control: the CDN should
+                verify a signed token or session before serving gated content,
+                regardless of the parameters supplied.
+            </p>
+
+            <pre>
+<span class="c"># CDN validates an HMAC signature before processing</span>
+<span class="v">https://cdn.example.com/image/</span><span class="s">asset.png</span>
+  <span class="k">?w=1920&sig=</span><span class="s">hmac_sha256(secret, path+params+expiry)</span>
+  <span class="k">&expires=</span><span class="s">1748995200</span>
+
+</pre>
+
+            <hr />
+            <h2>Timeline</h2>
+
+            <div class="timeline">
+                <div class="tl-item done">
+                    <div class="tl-date">Aug 12, 2025</div>
+                    <div class="tl-desc">
+                        Vulnerability reported to security@mobbin.com.
+                        Conversation ID:
+                        <code>cnv_1gdb4hcr</code>
+                    </div>
+                </div>
+                <div class="tl-item warn">
+                    <div class="tl-date">Sep – Dec 2025</div>
+                    <div class="tl-desc">
+                        Multiple follow-ups sent. No substantive response.
+                    </div>
+                </div>
+                <div class="tl-item warn">
+                    <div class="tl-date">April 17, 2026</div>
+                    <div class="tl-desc">
+                        Final notice sent. 14-day response window given before
+                        public disclosure.
+                    </div>
+                </div>
+                <div class="tl-item bad">
+                    <div class="tl-date">May 3, 2026</div>
+                    <div class="tl-desc">
+                        No response received. Publishing in line with
+                        responsible disclosure norms.
+                    </div>
+                </div>
+            </div>
+            <footer>
+                Published on 3rd May 2026 by Abishek S. |
+                <a href="mailto:abishek22004@gmail.com">Contact</a>
+            </footer>
+        </div>
+
+        <script>
+            const BASE =
+                "https://bytescale.mobbin.com/FW25bBB/image/mobbin.com/prod/content/app_screens/9a4cc027-1780-4dc4-bf40-28547660737b.png";
+            const WM =
+                "/mobbin.com/prod/watermark/1.0/b0e541d6-c90f-4e36-9ac2-022e2f2e2842/15";
+
+            function buildUrl() {
+                const w = document.getElementById("p-w").value;
+                const f = document.getElementById("p-f").value;
+                const fit = document.getElementById("p-fit").value;
+                const wm = document.getElementById("wm-on").checked;
+                const q = wm ? "15" : document.getElementById("p-q").value;
+
+                const params = new URLSearchParams();
+                params.set("f", f);
+                params.set("w", w);
+                params.set("q", q);
+                if (fit) params.set("fit", fit);
+                if (wm) {
+                    params.set("extend-bottom", "120");
+                    params.set("image", WM);
+                    params.set("gravity", "bottom");
+                    params.set("v", "1.0");
+                }
+                return BASE + "?" + params.toString();
+            }
+
+            function renderUrlPreview(url) {
+                const [base, qs] = url.split("?");
+                const parts = qs.split("&");
+                const hiParts = parts.map((p) => {
+                    const [k, v] = p.split("=");
+                    if (k === "w" || k === "q")
+                        return `<span class="hi">${k}=${v}</span>`;
+                    if (k === "image")
+                        return `<span style="color:#e07b7b">${k}=${decodeURIComponent(v)}</span>`;
+                    return `<span class="dim">${k}=${decodeURIComponent(v)}</span>`;
+                });
+                document.getElementById("url-display").innerHTML =
+                    `<span style="color:#7ec8e3">${base}</span><br>?${hiParts.join("&amp;")}`;
+            }
+
+            function updatePreview() {
+                renderUrlPreview(buildUrl());
+            }
+
+            let loadTimer;
+            let loadToken = 0;
+
+            function refreshPlayground() {
+                updatePreview();
+                clearTimeout(loadTimer);
+                loadTimer = setTimeout(loadImage, 120);
+            }
+
+            ["p-w", "p-q", "p-f", "p-fit"].forEach((id) => {
+                const control = document.getElementById(id);
+                control.addEventListener("change", refreshPlayground);
+                control.addEventListener("input", refreshPlayground);
+            });
+            document
+                .getElementById("wm-on")
+                .addEventListener("change", () => {
+                    const quality = document.getElementById("p-q");
+                    const enabled = document.getElementById("wm-on").checked;
+                    if (enabled) quality.value = "15";
+                    quality.disabled = enabled;
+                    refreshPlayground();
+                });
+
+            function loadImage() {
+                const token = ++loadToken;
+                const url = buildUrl();
+                const area = document.getElementById("img-area");
+                const status = document.getElementById("img-status");
+
+                area.innerHTML =
+                    '<div class="image-placeholder" style="color:#e67e22">Loading…</div>';
+                status.innerHTML =
+                    '<span class="status-load">Fetching…</span><span></span>';
+
+                const t0 = Date.now();
+                const img = new Image();
+                img.onload = () => {
+                    if (token !== loadToken) return;
+                    area.innerHTML = "";
+                    area.appendChild(img);
+                    const ms = Date.now() - t0;
+                    status.innerHTML = `<span class="status-ok">Loaded in ${ms}ms</span><span>${img.naturalWidth} x ${img.naturalHeight}px</span>`;
+                };
+                img.onerror = () => {
+                    if (token !== loadToken) return;
+                    area.innerHTML =
+                        '<div class="image-placeholder" style="color:var(--accent)">Failed to load image</div>';
+                    status.innerHTML =
+                        '<span class="status-err">Error loading image</span><span></span>';
+                };
+                img.src = url;
+                img.style.maxWidth = "100%";
+            }
+
+            function resetParams() {
+                document.getElementById("p-w").value = "1920";
+                document.getElementById("p-q").value = "100";
+                document.getElementById("p-f").value = "webp";
+                document.getElementById("p-fit").value = "";
+                document.getElementById("wm-on").checked = false;
+                document.getElementById("p-q").disabled = false;
+                refreshPlayground();
+            }
+
+            function copyUrl() {
+                navigator.clipboard.writeText(buildUrl()).then(() => {
+                    const btn = event.target;
+                    const orig = btn.textContent;
+                    btn.textContent = "Copied!";
+                    setTimeout(() => (btn.textContent = orig), 1500);
+                });
+            }
+
+            // Init
+            refreshPlayground();
+        </script>
+    </body>
+</html>
